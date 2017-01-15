@@ -11,16 +11,6 @@ var inArray = function( element, array) {
   }
 }
 
-var writingHandlers = function() {
-  $("#publish-button").click(function(e){
-  });
-
-  $('#text').on('input', function () {
-      var text = this.textContent, count = text.trim().replace(/\s+/g, ' ').split(' ').length;
-      $('.words').text(count);
-  });
-}
-
 var comSubmit = function(){
 $('#comment_submit').submit(function(e) {
     e.preventDefault();
@@ -108,6 +98,7 @@ var IO = function() {
       function(text, status_code, xhr){
         if(status_code === 'success'){
           $('#text').html(text);
+          wordCount();
         } else {
           console.log('load fail');
         }
@@ -153,12 +144,21 @@ var IO = function() {
 
   var setAutoSave = function(pid) {
     $("#text").on("input propertychange change keyup input paste", function(e) {
-      console.log("Input")
       clearTimeout(autoSave);
       autoSave = setTimeout(function() {
         saveText(pid);
       }, SAVE_INTERVAL);
     });
+  }
+
+  var wordCount = function(pid) {
+    $("#text").on("input propertychange change keyup input paste", function(e) {
+      var text = this.textContent, count = text.trim().replace(/\s+/g, ' ').split(' ').length;
+      document.querySelector('.words').textContent = "WordCount: " + count;
+    });
+    var text =  document.querySelector('#text').textContent;
+    count = text.trim().replace(/\s+/g, ' ').split(' ').length;
+    document.querySelector('.words').textContent = "WordCount: " + count;
   }
 
   var clearLoad = function() {
@@ -208,6 +208,7 @@ var IO = function() {
     clearLoad: clearLoad,
     vote:vote,
     comment:comment,
+    wordCount:wordCount,
   };
 }();
 
@@ -735,8 +736,6 @@ class WritingArea extends React.Component {
         this.pid = props.pid;
         this.state = {pid: props.pid}
     }
-
-
       componentWillMount(){
        pubButton();
       }
@@ -761,13 +760,14 @@ class WritingArea extends React.Component {
                 <div className="writing_head">
                     <button id="publish-button" onClick={this.publish.bind(this)} className="btn submit">Submit</button>
                     <h1>{this.props.prompt}</h1>
-                {  /*<p className="words">WordCount:</p>*/}
+                <div className="words">WordCount:</div>
                 </div>
                 <section className="writingpage_section">
                     <article id="text" contentEditable="true" className="content writingpage_article"></article>
                 </section>
               </div>
             )
+
             }
     }
 }
@@ -1105,7 +1105,6 @@ window.onload = function(){
     ReactDOM.render(<Story/>, document.getElementById('d_board'));
   }
   else if(inArray("writing",url)){
-    writingHandlers();
     ReactDOM.render(<WritingPage/>, document.getElementById('writing_page'));
   }
   else if(inArray("reading",url)){

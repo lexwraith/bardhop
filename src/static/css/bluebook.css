@@ -219,6 +219,13 @@ nav ul li button {
     font-size: 25px;
 }
 
+.words{
+  font-size: 18px;
+  padding-left: 15px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
+
 .wordcount{
   width: 200px;
 }
