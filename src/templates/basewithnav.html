@@ -2,20 +2,19 @@
 
 {% block header %}
 <div class="nav">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function (e) {
+          $.post("/getpenname", function(result){
+            $("#userName").text(result)
+            })});
+    </script>
     <ul>
-        <li class="block"><a href = "dashboard" class="block" href="#"><img src="../static/images/64x64.png" class="logo"></img>BardHop</a></li>
+        <li class="block"><a href="home" class="block" href="#"><img src="../static/images/64x64.png" class="logo"></img>BardHop</a></li>
         <li class="write"><a href="writing">Write</a></li>
         <li class="read"><a href="reading">Read</a></li>
         <li class="user"><a href="dashboard" id='userName'></a></li>
     </ul>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function (e) {
-            $.post("/getpenname", function(result){
-              console.log(result);
-              $("#userName").text(result)
-              })});
-      </script>
 </div>
 {% endblock %}
 

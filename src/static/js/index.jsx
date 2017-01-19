@@ -158,6 +158,9 @@ var IO = function() {
     });
     var text =  document.querySelector('#text').textContent;
     count = text.trim().replace(/\s+/g, ' ').split(' ').length;
+    if(count == 1){
+      count = 0;
+    }
     document.querySelector('.words').textContent = "WordCount: " + count;
   }
 

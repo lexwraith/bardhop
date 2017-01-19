@@ -7,6 +7,7 @@
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 50px;
+    margin-bottom: 50px;
     padding-top: 10px;
     line-height: 30px;
     margin-top: 22px;
@@ -263,12 +264,12 @@ nav ul li button {
   font-size: 46px;
 }
 .p-box-blue{
-  ont-size: 20px;
-  width: 200px;
-  height: 200px;
+  font-size: 20px;
+  width: 260px;
+  height: 260px;
   text-align: center;
   background-color: rgb(71, 160, 249);
-  border-radius: 69px 69px 69px 69px;
+  border-radius: 80px 80px 80px 80px;
   color: #FFF;
   order: 1;
   padding: 30px;
@@ -331,9 +332,9 @@ cursor: pointer;
   text-overflow: ellipsis;
 }
 
-.p-box { -webkit-transition: all .4s ease-in-out; }
+.p-box { -webkit-transition: all .3s ease-in-out; }
 .p-box:hover { -webkit-transform: scale(1.3); }
-.p-box-blue { -webkit-transition: all .4s ease-in-out; }
+.p-box-blue { -webkit-transition: all .3s ease-in-out; }
 .p-box-blue:hover { -webkit-transform: scale(1.3); }
 
 .genre{
@@ -752,6 +753,7 @@ section{
     display: flex;
     flex-direction: row;
     width: 250px;
+    padding-top: 10px;
 }
 .follow {
     order: 2;

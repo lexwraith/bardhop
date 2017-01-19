@@ -1,21 +1,7 @@
-
-
-{% extends "base.html" %}
-
-{% block header %}
-<div class="nav">
-    <ul>
-        <li class="block"><a href = "dashboard" class="block" href="#"><img src="../static/images/64x64.png" class="logo"></img>BardHop</a></li>
-        <li class="write"><a href="writing">Write</a></li>
-        <li class="read"><a href="reading">Read</a></li>
-        <li class="user"><a href="dashboard">Me</a></li>
-    </ul>
-</div>
-{% endblock %}
-
+{% extends "basewithnav.html" %}
 {% block content %}
 <body>
-  <div class="home-container" 
+  <div class="home-container"
     style="
     justify-content: center;
     text-align: left;
