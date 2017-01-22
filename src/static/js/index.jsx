@@ -11,12 +11,17 @@ var inArray = function( element, array) {
   }
 }
 
-var comSubmit = function(){
+var conSubmit = function(){
 $('#comment_submit').submit(function(e) {
     e.preventDefault();
-    console.log("test conSubit 2");
     return false;
 });
+
+$('#signupForm').submit(function(e) {
+    e.preventDefault();
+    return false;
+});
+
 }
 
 var pubButton = function(){
@@ -24,6 +29,57 @@ var pubButton = function(){
     document.getElementById("publish-button").className = 'btn submitted';
   });
 }
+
+var check = function(){
+  unObject = null
+  pnObject = null
+
+  var validate = function(){
+    console.log("test");
+    validateEmail();
+    validatePenname();
+  }
+
+  var validateEmail = function(){
+    var data = {
+      email: document.myform.email.value,
+    }
+      unObject = $.post('/checkUN',data=data, function(response,status_code, xhr){
+        if(response === 'SUCCESS'){
+          document.getElementById('emailError').innerHTML="";
+          } else {
+          document.getElementById('emailError').innerHTML="Email has been used";
+          $('#signupForm').submit(function(e) {
+              e.preventDefault();
+              console.log("test2");
+              return false;
+          });
+        }});
+      }
+
+    var validatePenname = function(){
+      var data = {
+        penname: document.myform.penname.value,
+      }
+        pnObject = $.post('/checkPN',data=data, function(response,status_code, xhr){
+          if(response === 'SUCCESS'){
+            document.getElementById('pennameError').innerHTML="";
+          } else {
+            document.getElementById('pennameError').innerHTML="Penname has been taken";
+            $('#signupForm').submit(function(e) {
+                e.preventDefault();
+                return false;
+                console.log("test2");
+            });
+          }});
+      }
+
+  return {
+    validate: validate,
+    validatePenname: validatePenname,
+    validateEmail: validateEmail,
+    };
+  }();
 
 var IO = function() {
   SAVE_INTERVAL = 500;
@@ -66,7 +122,7 @@ var IO = function() {
     saveObject = $.post('/save',
       data=data,
       function(response, status_code, xhr){
-        if(response === 'SUCCESS'){
+        if(response === 'SUCCESS'){onsubmit
         } else {
           console.log("Save failed.");
         }
@@ -359,9 +415,11 @@ class Signup extends React.Component{
           <h2>Sign Up</h2>
           <h3>read and write from thousands of prompts.
               <div className="break"></div></h3>
+          <h3 id="emailError"></h3>
+          <h3 id="pennameError"></h3>
           <fieldset>
               <p className="login-msg">Please include 5 cents for good luck.</p>
-              <form action="/signup" method="POST">
+              <form name="myform" id="signupForm" action="/signup" method="POST" onSubmit={check.validate}>
                   <input type="email" name="email" placeholder="Email" required />
                   <input type="password" name="password" placeholder="Password" required />
                   <input type="text" name="penname" placeholder="Pen Name" required />
@@ -984,6 +1042,7 @@ class CommentBox extends React.Component {
       $.post('/newcomment',data=data,function(comment){
       }.bind(this));
       this.props.upComment();
+      this.props.upComment();
     }
 
     render(){
@@ -1111,9 +1170,7 @@ window.onload = function(){
     ReactDOM.render(<WritingPage/>, document.getElementById('writing_page'));
   }
   else if(inArray("reading",url)){
-    comSubmit();
     ReactDOM.render(<ReadingPage/>, document.getElementById('reading-page'));
-
   }
   else if(inArray("",url)){
     ReactDOM.render(<Landing/>, document.getElementById('landing-page'));

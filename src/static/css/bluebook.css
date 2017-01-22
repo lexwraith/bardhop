@@ -737,6 +737,7 @@ section{
     display: flex;
     flex-direction: row;
     margin-left: 5px;
+    position: relative;
 }
 .like {
     margin-left: 20px;
@@ -1137,8 +1138,7 @@ h2.commentText{
   flex:2;
   font-size: 19px;
   text-align: left;
-  padding
-  margin: 0px;
+  margin-top: 0px;
 }
 
 form.commentForm{
@@ -1307,12 +1307,12 @@ LANDING*************************************************************************
     display: block;
     margin: 0;
     padding: 20px;
-    background: #fff;
+    background-color: white;
     border: 1px solid rgba(0, 0, 0, .3);
     border-top: 0;
     border-radius: 0 0 5px 5px;
     box-shadow: 0 1px 2px #aaa;
-    opacity: .8;
+    opacity: 1;
 }
 #login input {
     width: 238px;

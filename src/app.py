@@ -27,7 +27,6 @@ def landing():
         else:
             return render_template('landing.html')
     else:
-        print("no cookie")
         return render_template('landing.html')
 
 @app.route('/home')
@@ -196,10 +195,26 @@ def getfavoritepieces():
 @app.route('/getpenname', methods=["POST"])
 @login_required
 def get_pen_name():
-    print("hi")
     print(current_user.penname)
     return str(current_user.penname)
 
+@app.route('/checkUN', methods=['POST'])
+def checkUN():
+    email = request.form["email"]
+    is_taken = Author.query.filter_by(email=email).first()
+    if(not is_taken):
+        return "SUCCESS"
+    else:
+        return "fail"
+
+@app.route('/checkPN', methods=['POST'])
+def checkPN():
+    penname = request.form["penname"]
+    is_taken = Author.query.filter_by(penname=penname).first()
+    if(not is_taken):
+        return "SUCCESS"
+    else:
+        return "fail"
 
 
 @app.route('/signup', methods=["POST"])
@@ -208,7 +223,7 @@ def signup():
     password = request.form["password"]
     penname = request.form["penname"]
     is_valid = Author.validate_form(request.form)
-
+    error = None
     if(is_valid):
         author = Author.add_new_author(email, password, penname)
         login_user(author,remember=True)
@@ -217,7 +232,8 @@ def signup():
         return response
     else:
         flash("Signup failed")
-        return redirect('/')
+        error = 'Invalid credentials'
+    return redirect('/')
 
 @app.route('/login', methods=["POST"])
 def login():

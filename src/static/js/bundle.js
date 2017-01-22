@@ -56,10 +56,14 @@
 	  }
 	};
 
-	var comSubmit = function () {
+	var conSubmit = function () {
 	  $('#comment_submit').submit(function (e) {
 	    e.preventDefault();
-	    console.log("test conSubit 2");
+	    return false;
+	  });
+
+	  $('#signupForm').submit(function (e) {
+	    e.preventDefault();
 	    return false;
 	  });
 	};
@@ -69,6 +73,59 @@
 	    document.getElementById("publish-button").className = 'btn submitted';
 	  });
 	};
+
+	var check = function () {
+	  unObject = null;
+	  pnObject = null;
+
+	  var validate = function () {
+	    console.log("test");
+	    validateEmail();
+	    validatePenname();
+	  };
+
+	  var validateEmail = function () {
+	    var data = {
+	      email: document.myform.email.value
+	    };
+	    unObject = $.post('/checkUN', data = data, function (response, status_code, xhr) {
+	      if (response === 'SUCCESS') {
+	        document.getElementById('emailError').innerHTML = "";
+	      } else {
+	        document.getElementById('emailError').innerHTML = "Email has been used";
+	        $('#signupForm').submit(function (e) {
+	          e.preventDefault();
+	          console.log("test2");
+	          return false;
+	        });
+	      }
+	    });
+	  };
+
+	  var validatePenname = function () {
+	    var data = {
+	      penname: document.myform.penname.value
+	    };
+	    pnObject = $.post('/checkPN', data = data, function (response, status_code, xhr) {
+	      if (response === 'SUCCESS') {
+	        document.getElementById('pennameError').innerHTML = "";
+	      } else {
+	        document.getElementById('pennameError').innerHTML = "Penname has been taken";
+	        $('#signupForm').submit(function (e) {
+	          e.preventDefault();
+	          return false;
+	          console.log("test2");
+	        });
+	      }
+	    });
+	  };
+
+	  return {
+	    validate: validate,
+	    validatePenname: validatePenname,
+	    validateEmail: validateEmail
+	  };
+	}();
 
 	var IO = function () {
 	  SAVE_INTERVAL = 500;
@@ -109,7 +166,9 @@
 	      saveObject = null;
 	    }
 	    saveObject = $.post('/save', data = data, function (response, status_code, xhr) {
-	      if (response === 'SUCCESS') {} else {
+	      if (response === 'SUCCESS') {
+	        onsubmit;
+	      } else {
 	        console.log("Save failed.");
 	      }
 	    });
@@ -273,16 +332,16 @@
 	    const textStory = this.state.favorites ? 'Go to My Writing' : 'Go to My Favorites';
 	    var mode = this.state.favorites ? 0 : 1;
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "div",
-	        { className: "s-tog" },
+	        'div',
+	        { className: 's-tog' },
 	        React.createElement(
-	          "div",
-	          { className: "black_box", onClick: this.handleDisplay },
+	          'div',
+	          { className: 'black_box', onClick: this.handleDisplay },
 	          React.createElement(
-	            "h1",
+	            'h1',
 	            null,
 	            textStory
 	          )
@@ -301,35 +360,35 @@
 	  render() {
 	    var { title, pic, author, date, text } = this.props;
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "h1",
-	        { className: "story_title" },
+	        'h1',
+	        { className: 'story_title' },
 	        title
 	      ),
 	      React.createElement(
-	        "div",
-	        { className: "profile-box" },
-	        React.createElement("img", { className: "author_pic img-circular", src: pic, height: 24 }),
+	        'div',
+	        { className: 'profile-box' },
+	        React.createElement('img', { className: 'author_pic img-circular', src: pic, height: 24 }),
 	        React.createElement(
-	          "div",
-	          { className: "author_info" },
+	          'div',
+	          { className: 'author_info' },
 	          React.createElement(
-	            "h1",
-	            { className: "author_name" },
+	            'h1',
+	            { className: 'author_name' },
 	            author
 	          ),
 	          React.createElement(
-	            "h1",
-	            { className: "date" },
+	            'h1',
+	            { className: 'date' },
 	            date
 	          )
 	        )
 	      ),
 	      React.createElement(
-	        "p",
-	        { className: "story_text" },
+	        'p',
+	        { className: 'story_text' },
 	        text
 	      )
 	    );
@@ -376,22 +435,22 @@
 
 	  render() {
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "div",
-	        { className: "form-container" },
+	        'div',
+	        { className: 'form-container' },
 	        React.createElement(
-	          "h1",
+	          'h1',
 	          null,
-	          "BardHop"
+	          'BardHop'
 	        ),
 	        React.createElement(
-	          "div",
-	          { id: "login" },
+	          'div',
+	          { id: 'login' },
 	          this.checkForm(this.state.signupLogin)
 	        ),
-	        React.createElement("div", { className: "intro" })
+	        React.createElement('div', { className: 'intro' })
 	      )
 	    );
 	  }
@@ -407,39 +466,41 @@
 
 	  render() {
 	    return React.createElement(
-	      "div",
-	      { className: "form-signup" },
+	      'div',
+	      { className: 'form-signup' },
 	      React.createElement(
-	        "h2",
+	        'h2',
 	        null,
-	        "Sign Up"
+	        'Sign Up'
 	      ),
 	      React.createElement(
-	        "h3",
+	        'h3',
 	        null,
-	        "read and write from thousands of prompts.",
-	        React.createElement("div", { className: "break" })
+	        'read and write from thousands of prompts.',
+	        React.createElement('div', { className: 'break' })
 	      ),
+	      React.createElement('h3', { id: 'emailError' }),
+	      React.createElement('h3', { id: 'pennameError' }),
 	      React.createElement(
-	        "fieldset",
+	        'fieldset',
 	        null,
 	        React.createElement(
-	          "p",
-	          { className: "login-msg" },
-	          "Please include 5 cents for good luck."
+	          'p',
+	          { className: 'login-msg' },
+	          'Please include 5 cents for good luck.'
 	        ),
 	        React.createElement(
-	          "form",
-	          { action: "/signup", method: "POST" },
-	          React.createElement("input", { type: "email", name: "email", placeholder: "Email", required: true }),
-	          React.createElement("input", { type: "password", name: "password", placeholder: "Password", required: true }),
-	          React.createElement("input", { type: "text", name: "penname", placeholder: "Pen Name", required: true }),
-	          React.createElement("input", { type: "submit", value: "Sign up" })
+	          'form',
+	          { name: 'myform', id: 'signupForm', action: '/signup', method: 'POST', onSubmit: check.validate },
+	          React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', required: true }),
+	          React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', required: true }),
+	          React.createElement('input', { type: 'text', name: 'penname', placeholder: 'Pen Name', required: true }),
+	          React.createElement('input', { type: 'submit', value: 'Sign up' })
 	        ),
 	        React.createElement(
-	          "a",
-	          { className: "loginSwitch", onClick: this.props.handleForm },
-	          " Already signed up? Log in."
+	          'a',
+	          { className: 'loginSwitch', onClick: this.props.handleForm },
+	          ' Already signed up? Log in.'
 	        )
 	      )
 	    );
@@ -457,30 +518,30 @@
 
 	  render() {
 	    return React.createElement(
-	      "div",
-	      { className: "form-login" },
+	      'div',
+	      { className: 'form-login' },
 	      React.createElement(
-	        "h1",
+	        'h1',
 	        null,
-	        "Log in"
+	        'Log in'
 	      ),
 	      React.createElement(
-	        "fieldset",
+	        'fieldset',
 	        null,
 	        React.createElement(
-	          "form",
-	          { id: "login-form", action: "/login", method: "POST" },
-	          React.createElement("input", { type: "email", name: "email", placeholder: "Enter your email address", required: true }),
-	          React.createElement("input", { type: "password", name: "password", placeholder: "Enter your password", required: true }),
-	          React.createElement("br", null),
-	          React.createElement("input", { onClick: this.props.loginHandler, id: "login-submit", type: "submit", value: "Log in" })
+	          'form',
+	          { id: 'login-form', action: '/login', method: 'POST' },
+	          React.createElement('input', { type: 'email', name: 'email', placeholder: 'Enter your email address', required: true }),
+	          React.createElement('input', { type: 'password', name: 'password', placeholder: 'Enter your password', required: true }),
+	          React.createElement('br', null),
+	          React.createElement('input', { onClick: this.props.loginHandler, id: 'login-submit', type: 'submit', value: 'Log in' })
 	        ),
 	        React.createElement(
-	          "a",
-	          { className: "signupSwitch", onClick: this.props.handleForm },
-	          " Not signed up? Create an account."
+	          'a',
+	          { className: 'signupSwitch', onClick: this.props.handleForm },
+	          ' Not signed up? Create an account.'
 	        ),
-	        React.createElement("br", null)
+	        React.createElement('br', null)
 	      )
 	    );
 	  }
@@ -514,25 +575,25 @@
 	      tab.push(React.createElement(PromptsFront, { piece: this.state.result[i].piece, prompt: this.state.result[i].text, promptid: this.state.result[i].prompt, date: this.state.result[i].date }));
 	    }
 	    return React.createElement(
-	      "div",
-	      { className: "dashboard_front" },
+	      'div',
+	      { className: 'dashboard_front' },
 	      React.createElement(
-	        "div",
-	        { className: "following" },
+	        'div',
+	        { className: 'following' },
 	        React.createElement(
-	          "div",
-	          { className: "rectangle" },
+	          'div',
+	          { className: 'rectangle' },
 	          React.createElement(
-	            "h1",
+	            'h1',
 	            null,
-	            "Stories I Liked"
+	            'Stories I Liked'
 	          )
 	        ),
-	        React.createElement("hr", null)
+	        React.createElement('hr', null)
 	      ),
 	      React.createElement(
-	        "div",
-	        { className: "display_box_container" },
+	        'div',
+	        { className: 'display_box_container' },
 	        tab
 	      )
 	    );
@@ -561,53 +622,53 @@
 	    }
 	    if (this.state.result.length > 0) {
 	      return React.createElement(
-	        "div",
-	        { className: "dashboard_front" },
+	        'div',
+	        { className: 'dashboard_front' },
 	        React.createElement(
-	          "div",
-	          { className: "following" },
+	          'div',
+	          { className: 'following' },
 	          React.createElement(
-	            "div",
-	            { className: "rectangle" },
+	            'div',
+	            { className: 'rectangle' },
 	            React.createElement(
-	              "h1",
+	              'h1',
 	              null,
-	              "Stories I Wrote"
+	              'Stories I Wrote'
 	            )
 	          ),
-	          React.createElement("hr", null)
+	          React.createElement('hr', null)
 	        ),
 	        React.createElement(
-	          "div",
+	          'div',
 	          null,
 	          tab
 	        )
 	      );
 	    } else {
 	      return React.createElement(
-	        "div",
-	        { className: "dashboard_front" },
+	        'div',
+	        { className: 'dashboard_front' },
 	        React.createElement(
-	          "div",
-	          { className: "following" },
+	          'div',
+	          { className: 'following' },
 	          React.createElement(
-	            "div",
-	            { className: "rectangle" },
+	            'div',
+	            { className: 'rectangle' },
 	            React.createElement(
-	              "h1",
+	              'h1',
 	              null,
-	              "Stories I Wrote"
+	              'Stories I Wrote'
 	            )
 	          ),
-	          React.createElement("hr", null)
+	          React.createElement('hr', null)
 	        ),
 	        React.createElement(
-	          "div",
-	          { className: "display_box_container" },
+	          'div',
+	          { className: 'display_box_container' },
 	          React.createElement(
-	            "h1",
+	            'h1',
 	            null,
-	            "You haven't written anything yet! Go to the writing page to get started!"
+	            'You haven\'t written anything yet! Go to the writing page to get started!'
 	          )
 	        )
 	      );
@@ -644,39 +705,39 @@
 	  }
 	  render() {
 	    return React.createElement(
-	      "div",
-	      { className: "display_box" },
+	      'div',
+	      { className: 'display_box' },
 	      React.createElement(
-	        "div",
-	        { className: "feedback_header" },
+	        'div',
+	        { className: 'feedback_header' },
 	        React.createElement(
-	          "div",
-	          { className: "feedback_header_date" },
+	          'div',
+	          { className: 'feedback_header_date' },
 	          this.getDate()
 	        ),
 	        React.createElement(
-	          "div",
-	          { className: "feedback_header_likes" },
-	          "☆ ",
+	          'div',
+	          { className: 'feedback_header_likes' },
+	          '☆ ',
 	          this.state.votes
 	        )
 	      ),
 	      React.createElement(
-	        "h1",
+	        'h1',
 	        null,
 	        React.createElement(
-	          "b",
+	          'b',
 	          null,
 	          this.state.writing_prompt
 	        )
 	      ),
 	      React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "p",
-	          { id: this.tid, className: "pText" },
-	          React.createElement("hr", null)
+	          'p',
+	          { id: this.tid, className: 'pText' },
+	          React.createElement('hr', null)
 	        )
 	      )
 	    );
@@ -709,13 +770,13 @@
 
 	  render() {
 	    return React.createElement(
-	      "div",
-	      { className: "prompt_tab" },
+	      'div',
+	      { className: 'prompt_tab' },
 	      React.createElement(
-	        "div",
-	        { onClick: this.handleChoice, className: "daily_box" },
+	        'div',
+	        { onClick: this.handleChoice, className: 'daily_box' },
 	        React.createElement(
-	          "p",
+	          'p',
 	          null,
 	          this.prompt
 	        )
@@ -757,17 +818,17 @@
 	  render() {
 	    if (this.state.published) {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "promptInfo", onClick: this.props.clickHandler },
+	          'div',
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
-	            "div",
-	            { className: "p-box-green" },
+	            'div',
+	            { className: 'p-box-green' },
 	            React.createElement(
-	              "p",
-	              { className: "writing_page_prompts" },
+	              'p',
+	              { className: 'writing_page_prompts' },
 	              this.props.prompt
 	            )
 	          )
@@ -776,17 +837,17 @@
 	    }
 	    if (this.setHighlight()) {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "promptInfo", onClick: this.props.clickHandler },
+	          'div',
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
-	            "div",
-	            { className: "p-box-blue" },
+	            'div',
+	            { className: 'p-box-blue' },
 	            React.createElement(
-	              "p",
-	              { className: "writing_page_prompts" },
+	              'p',
+	              { className: 'writing_page_prompts' },
 	              this.props.prompt
 	            )
 	          )
@@ -794,17 +855,17 @@
 	      );
 	    } else {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "promptInfo", onClick: this.props.clickHandler },
+	          'div',
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
-	            "div",
-	            { className: "p-box" },
+	            'div',
+	            { className: 'p-box' },
 	            React.createElement(
-	              "p",
-	              { className: "writing_page_prompts" },
+	              'p',
+	              { className: 'writing_page_prompts' },
 	              this.props.prompt
 	            )
 	          )
@@ -864,11 +925,11 @@
 	      }));
 	    };
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "div",
-	        { className: "selectionBox" },
+	        'div',
+	        { className: 'selectionBox' },
 	        tab
 	      ),
 	      React.createElement(WritingArea, { pid: this.state.currentPID, prompt: this.state.currentPrompt })
@@ -896,45 +957,45 @@
 	  render() {
 	    if (this.props.pid == 0) {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "writing_head" },
+	          'div',
+	          { className: 'writing_head' },
 	          React.createElement(
-	            "h1",
-	            { className: "no-prompt" },
+	            'h1',
+	            { className: 'no-prompt' },
 	            this.props.prompt
 	          )
 	        )
 	      );
 	    } else {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "writing_head" },
+	          'div',
+	          { className: 'writing_head' },
 	          React.createElement(
-	            "button",
-	            { id: "publish-button", onClick: this.publish.bind(this), className: "btn submit" },
-	            "Submit"
+	            'button',
+	            { id: 'publish-button', onClick: this.publish.bind(this), className: 'btn submit' },
+	            'Submit'
 	          ),
 	          React.createElement(
-	            "h1",
+	            'h1',
 	            null,
 	            this.props.prompt
 	          ),
 	          React.createElement(
-	            "div",
-	            { className: "words" },
-	            "WordCount:"
+	            'div',
+	            { className: 'words' },
+	            'WordCount:'
 	          )
 	        ),
 	        React.createElement(
-	          "section",
-	          { className: "writingpage_section" },
-	          React.createElement("article", { id: "text", contentEditable: "true", className: "content writingpage_article" })
+	          'section',
+	          { className: 'writingpage_section' },
+	          React.createElement('article', { id: 'text', contentEditable: 'true', className: 'content writingpage_article' })
 	        )
 	      );
 	    }
@@ -1035,20 +1096,20 @@
 	        pieceID: this.state.pieceID }));
 	    }
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "div",
-	        { className: "selectionBox" },
+	        'div',
+	        { className: 'selectionBox' },
 	        tab
 	      ),
 	      React.createElement(ReadingArea, { author: this.state.currentAuthor, pid: this.state.currentPromptID, prompt: this.state.currentPrompt }),
 	      React.createElement(
-	        "div",
-	        { "class": "cover-comments" },
+	        'div',
+	        { 'class': 'cover-comments' },
 	        React.createElement(
-	          "div",
-	          { id: "rct" },
+	          'div',
+	          { id: 'rct' },
 	          React.createElement(Feedback, {
 	            pieceID: this.state.pieceID,
 	            upComment: this.toggleComment.bind(this),
@@ -1081,17 +1142,17 @@
 	  render() {
 	    if (this.setHighlight()) {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "promptInfo", onClick: this.props.clickHandler },
+	          'div',
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
-	            "div",
-	            { className: "p-box-blue" },
+	            'div',
+	            { className: 'p-box-blue' },
 	            React.createElement(
-	              "p",
-	              { className: "writing_page_prompts" },
+	              'p',
+	              { className: 'writing_page_prompts' },
 	              this.props.prompt
 	            )
 	          )
@@ -1099,17 +1160,17 @@
 	      );
 	    } else {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "div",
-	          { className: "promptInfo", onClick: this.props.clickHandler },
+	          'div',
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
-	            "div",
-	            { className: "p-box" },
+	            'div',
+	            { className: 'p-box' },
 	            React.createElement(
-	              "p",
-	              { className: "writing_page_prompts" },
+	              'p',
+	              { className: 'writing_page_prompts' },
 	              this.props.prompt
 	            )
 	          )
@@ -1129,27 +1190,27 @@
 
 	  render() {
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "div",
-	        { className: "reading_head" },
+	        'div',
+	        { className: 'reading_head' },
 	        React.createElement(
-	          "h1",
+	          'h1',
 	          null,
 	          this.props.prompt
 	        ),
 	        React.createElement(
-	          "p",
+	          'p',
 	          null,
-	          " Author: ",
+	          ' Author: ',
 	          this.props.author
 	        )
 	      ),
 	      React.createElement(
-	        "section",
-	        { className: "writingpage_section" },
-	        React.createElement("article", { id: "text", contentEditable: "false", className: "content writingpage_article" })
+	        'section',
+	        { className: 'writingpage_section' },
+	        React.createElement('article', { id: 'text', contentEditable: 'false', className: 'content writingpage_article' })
 	      )
 	    );
 	  }
@@ -1169,12 +1230,13 @@
 	    };
 	    $.post('/newcomment', data = data, function (comment) {}.bind(this));
 	    this.props.upComment();
+	    this.props.upComment();
 	  }
 
 	  render() {
 	    return React.createElement(
-	      "div",
-	      { className: "commentBox" },
+	      'div',
+	      { className: 'commentBox' },
 	      React.createElement(CommentList, { comments: this.props.comments }),
 	      React.createElement(CommentForm, { onCommentSubmit: this.handleCommentSubmit, pieceID: this.props.pieceID })
 	    );
@@ -1201,10 +1263,10 @@
 	  render() {
 	    comSubmit();
 	    return React.createElement(
-	      "form",
-	      { id: "comment_submit", className: "commentForm", onSubmit: this.handleSubmit },
-	      React.createElement("textarea", { type: "text", placeholder: "Say something...", ref: "text" }),
-	      React.createElement("input", { type: "submit", value: "Post", className: "commentSubmit" })
+	      'form',
+	      { id: 'comment_submit', className: 'commentForm', onSubmit: this.handleSubmit },
+	      React.createElement('textarea', { type: 'text', placeholder: 'Say something...', ref: 'text' }),
+	      React.createElement('input', { type: 'submit', value: 'Post', className: 'commentSubmit' })
 	    );
 	  }
 	}
@@ -1220,12 +1282,12 @@
 	      return React.createElement(
 	        Comment,
 	        { author: comment.name, text: comment.comment },
-	        " "
+	        ' '
 	      );
 	    });
 	    return React.createElement(
-	      "div",
-	      { className: "commentList" },
+	      'div',
+	      { className: 'commentList' },
 	      commentNodes
 	    );
 	  }
@@ -1240,20 +1302,20 @@
 
 	  render() {
 	    return React.createElement(
-	      "div",
-	      { className: "comment" },
+	      'div',
+	      { className: 'comment' },
 	      React.createElement(
-	        "h2",
-	        { className: "commentAuthor" },
+	        'h2',
+	        { className: 'commentAuthor' },
 	        React.createElement(
-	          "b",
+	          'b',
 	          null,
 	          this.props.author
 	        )
 	      ),
 	      React.createElement(
-	        "h2",
-	        { className: "commentText" },
+	        'h2',
+	        { className: 'commentText' },
 	        this.props.text
 	      )
 	    );
@@ -1268,31 +1330,31 @@
 	  comments() {
 	    if (this.props.showCommentBox === 1) {
 	      return React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(CommentBox, { upComment: this.props.upComment, comments: this.props.comments, pieceID: this.props.pieceID })
 	      );
 	    }
-	    return React.createElement("div", null);
+	    return React.createElement('div', null);
 	  }
 
 	  render() {
 	    const textLike = this.props.likeState ? 'Unlike' : 'Like';
 	    const textComment = "Comments";
 	    return React.createElement(
-	      "div",
+	      'div',
 	      null,
 	      React.createElement(
-	        "div",
-	        { className: "rct-1" },
+	        'div',
+	        { className: 'rct-1' },
 	        React.createElement(
-	          "div",
-	          { onClick: this.props.onClick, className: "like" },
+	          'div',
+	          { onClick: this.props.onClick, className: 'like' },
 	          textLike
 	        ),
 	        React.createElement(
-	          "div",
-	          { onClick: this.props.upComment, className: "comment-opening" },
+	          'div',
+	          { onClick: this.props.upComment, className: 'comment-opening' },
 	          textComment
 	        )
 	      ),
@@ -1311,7 +1373,6 @@
 	  } else if (inArray("writing", url)) {
 	    ReactDOM.render(React.createElement(WritingPage, null), document.getElementById('writing_page'));
 	  } else if (inArray("reading", url)) {
-	    comSubmit();
 	    ReactDOM.render(React.createElement(ReadingPage, null), document.getElementById('reading-page'));
 	  } else if (inArray("", url)) {
 	    ReactDOM.render(React.createElement(Landing, null), document.getElementById('landing-page'));
