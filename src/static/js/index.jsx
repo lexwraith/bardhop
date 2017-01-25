@@ -26,18 +26,23 @@ $('#signupForm').submit(function(e) {
 
 var pubButton = function(){
   $("#publish-button").click(function() {
-    document.getElementById("publish-button").className = 'btn submitted';
+    document.getElementById("publish-button").innerHTML =  "Submitted";
+    //document.getElementById("publish-button").removeClass('onion').addClass('onionClick'); =  "Submitted";
   });
 }
 
 var check = function(){
   unObject = null
   pnObject = null
+  validE = 0
+  validP = 0
 
   var validate = function(){
-    console.log("test");
     validateEmail();
     validatePenname();
+    if(validE && validP){
+      $('#signupForm').unbind('submit');
+    }
   }
 
   var validateEmail = function(){
@@ -47,13 +52,10 @@ var check = function(){
       unObject = $.post('/checkUN',data=data, function(response,status_code, xhr){
         if(response === 'SUCCESS'){
           document.getElementById('emailError').innerHTML="";
+          validE = 1;
           } else {
+            validE = 0;
           document.getElementById('emailError').innerHTML="Email has been used";
-          $('#signupForm').submit(function(e) {
-              e.preventDefault();
-              console.log("test2");
-              return false;
-          });
         }});
       }
 
@@ -64,13 +66,10 @@ var check = function(){
         pnObject = $.post('/checkPN',data=data, function(response,status_code, xhr){
           if(response === 'SUCCESS'){
             document.getElementById('pennameError').innerHTML="";
+            validP = 1;
           } else {
+            validP = 0;
             document.getElementById('pennameError').innerHTML="Penname has been taken";
-            $('#signupForm').submit(function(e) {
-                e.preventDefault();
-                return false;
-                console.log("test2");
-            });
           }});
       }
 
@@ -657,7 +656,7 @@ This class creates a set of prompts for the writing page.
 class PromptsWriting extends React.Component{
   constructor(props){
     super(props);
-    this.state = {published:false}
+    this.state= { published: false}
   }
 
   setHighlight(){
@@ -671,11 +670,12 @@ class PromptsWriting extends React.Component{
      pid:this.props.pid,
    };
     this.serverRequest = $.post("/ispublished",data=data, function(result){
-          if(result == "1"){
-            this.setState({published:true});
-          }
-          else {
-          }
+      if(result == 1){
+        this.setState({published: true})
+      }
+      else{
+        this.setState({published: false})
+      }
     }.bind(this));
   }
 
@@ -687,7 +687,7 @@ class PromptsWriting extends React.Component{
     if(this.state.published){
       return(
         <div>
-          <div className="promptInfo" onClick= {this.props.clickHandler}>
+          <div className="promptInfo" onClick= {this.props.clickHandler(this.props.highlight,this.props.pid,this.props.prompt,this.state.published)}>
             <div className="p-box-green">
               <p className="writing_page_prompts">
                 {this.props.prompt}
@@ -700,7 +700,7 @@ class PromptsWriting extends React.Component{
     if(this.setHighlight()){
       return(
         <div>
-          <div className="promptInfo" onClick= {this.props.clickHandler}>
+          <div className="promptInfo" onClick= {this.props.clickHandler(this.props.highlight,this.props.pid,this.props.prompt,this.state.published)}>
             <div className="p-box-blue">
               <p className="writing_page_prompts">
                 {this.props.prompt}
@@ -714,7 +714,7 @@ class PromptsWriting extends React.Component{
     else{
     return(
       <div>
-        <div className="promptInfo" onClick= {this.props.clickHandler}>
+        <div className="promptInfo" onClick= {this.props.clickHandler(this.props.highlight,this.props.pid,this.props.prompt,this.state.published)}>
           <div className="p-box">
             <p className="writing_page_prompts">
               {this.props.prompt}
@@ -734,8 +734,9 @@ This class creates the writing page. It has 7 prompts taken from writingPrompts 
 class WritingPage extends React.Component{
   constructor(){
     super();
-    this.state = { result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false};
+    this.state = { published: false, result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false};
     this.highlight = this.highlight.bind(this);
+    this.setPublished = this.setPublished.bind(this);
 
   }
 
@@ -756,14 +757,19 @@ class WritingPage extends React.Component{
     this.setState({currentPrompt: prompt});
   }
 
+  setPublished(publish,event){
+    this.setState({published: publish});
+  }
+
   highlight(highlight,event){
     this.setState({highlight: false})
   }
 
-  clickHandler(highlight,pid,prompt,event){
-    this.setPID(pid,event);
+  clickHandler(highlight,pid,prompt,published,event){
     this.setPrompt(prompt,event);
+    this.setPID(pid,event);
     this.highlight(highlight,event);
+    this.setPublished(published,event)
   }
 
   render(){
@@ -771,7 +777,7 @@ class WritingPage extends React.Component{
     var writingArea = null;
     for (var i = 0; i < this.state.result.length; i++){
       tab.push(<PromptsWriting
-        clickHandler={this.clickHandler.bind(this,this.state.highlight,this.state.result[i].pid,this.state.result[i].text)}
+        clickHandler={this.clickHandler}
         prompt={this.state.result[i].text}
         pid={this.state.result[i].pid}
         currentPID = {this.state.currentPID}
@@ -782,7 +788,7 @@ class WritingPage extends React.Component{
             <div className="selectionBox">
                 {tab}
             </div>
-             <WritingArea pid={this.state.currentPID} prompt={this.state.currentPrompt}/>
+             <WritingArea published={this.state.published} pid={this.state.currentPID} prompt={this.state.currentPrompt}/>
         </div>
       )
   }
@@ -815,11 +821,23 @@ class WritingArea extends React.Component {
               </div>
             )
           }
+          if (this.props.published) {
+            return(
+            <div>
+                <div className="writing_head">
+                    <h1>{this.props.prompt}</h1>
+                <div className="words">WordCount:</div>
+                </div>
+                <section className="writingpage_section">
+                    <article id="text" contentEditable="true" className="content writingpage_article"></article>
+                </section>
+              </div>)
+          }
           else{
             return(
             <div>
                 <div className="writing_head">
-                    <button id="publish-button" onClick={this.publish.bind(this)} className="btn submit">Submit</button>
+                    <button id="publish-button" onClick={this.publish.bind(this)} className="btn">Submit</button>
                     <h1>{this.props.prompt}</h1>
                 <div className="words">WordCount:</div>
                 </div>
@@ -1168,11 +1186,13 @@ window.onload = function(){
   }
   else if(inArray("writing",url)){
     ReactDOM.render(<WritingPage/>, document.getElementById('writing_page'));
+    pubButton();
   }
   else if(inArray("reading",url)){
     ReactDOM.render(<ReadingPage/>, document.getElementById('reading-page'));
   }
   else if(inArray("",url)){
     ReactDOM.render(<Landing/>, document.getElementById('landing-page'));
+    conSubmit();
   }
 };

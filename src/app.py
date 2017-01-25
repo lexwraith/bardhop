@@ -232,7 +232,7 @@ def signup():
         return response
     else:
         flash("Signup failed")
-        error = 'Invalid credentials'
+        print("signup fail")
     return redirect('/')
 
 @app.route('/login', methods=["POST"])

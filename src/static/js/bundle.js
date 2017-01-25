@@ -70,18 +70,23 @@
 
 	var pubButton = function () {
 	  $("#publish-button").click(function () {
-	    document.getElementById("publish-button").className = 'btn submitted';
+	    document.getElementById("publish-button").innerHTML = "Submitted";
+	    //document.getElementById("publish-button").removeClass('onion').addClass('onionClick'); =  "Submitted";
 	  });
 	};
 
 	var check = function () {
 	  unObject = null;
 	  pnObject = null;
+	  validE = 0;
+	  validP = 0;
 
 	  var validate = function () {
-	    console.log("test");
 	    validateEmail();
 	    validatePenname();
+	    if (validE && validP) {
+	      $('#signupForm').unbind('submit');
+	    }
 	  };
 
 	  var validateEmail = function () {
@@ -91,13 +96,10 @@
 	    unObject = $.post('/checkUN', data = data, function (response, status_code, xhr) {
 	      if (response === 'SUCCESS') {
 	        document.getElementById('emailError').innerHTML = "";
+	        validE = 1;
 	      } else {
+	        validE = 0;
 	        document.getElementById('emailError').innerHTML = "Email has been used";
-	        $('#signupForm').submit(function (e) {
-	          e.preventDefault();
-	          console.log("test2");
-	          return false;
-	        });
 	      }
 	    });
 	  };
@@ -109,13 +111,10 @@
 	    pnObject = $.post('/checkPN', data = data, function (response, status_code, xhr) {
 	      if (response === 'SUCCESS') {
 	        document.getElementById('pennameError').innerHTML = "";
+	        validP = 1;
 	      } else {
+	        validP = 0;
 	        document.getElementById('pennameError').innerHTML = "Penname has been taken";
-	        $('#signupForm').submit(function (e) {
-	          e.preventDefault();
-	          return false;
-	          console.log("test2");
-	        });
 	      }
 	    });
 	  };
@@ -805,9 +804,11 @@
 	      pid: this.props.pid
 	    };
 	    this.serverRequest = $.post("/ispublished", data = data, function (result) {
-	      if (result == "1") {
+	      if (result == 1) {
 	        this.setState({ published: true });
-	      } else {}
+	      } else {
+	        this.setState({ published: false });
+	      }
 	    }.bind(this));
 	  }
 
@@ -822,7 +823,7 @@
 	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'promptInfo', onClick: this.props.clickHandler },
+	          { className: 'promptInfo', onClick: this.props.clickHandler(this.props.highlight, this.props.pid, this.props.prompt, this.state.published) },
 	          React.createElement(
 	            'div',
 	            { className: 'p-box-green' },
@@ -841,7 +842,7 @@
 	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'promptInfo', onClick: this.props.clickHandler },
+	          { className: 'promptInfo', onClick: this.props.clickHandler(this.props.highlight, this.props.pid, this.props.prompt, this.state.published) },
 	          React.createElement(
 	            'div',
 	            { className: 'p-box-blue' },
@@ -859,7 +860,7 @@
 	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'promptInfo', onClick: this.props.clickHandler },
+	          { className: 'promptInfo', onClick: this.props.clickHandler(this.props.highlight, this.props.pid, this.props.prompt, this.state.published) },
 	          React.createElement(
 	            'div',
 	            { className: 'p-box' },
@@ -882,8 +883,9 @@
 	class WritingPage extends React.Component {
 	  constructor() {
 	    super();
-	    this.state = { result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false };
+	    this.state = { published: false, result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false };
 	    this.highlight = this.highlight.bind(this);
+	    this.setPublished = this.setPublished.bind(this);
 	  }
 
 	  componentWillMount() {
@@ -902,14 +904,19 @@
 	    this.setState({ currentPrompt: prompt });
 	  }
 
+	  setPublished(publish, event) {
+	    this.setState({ published: publish });
+	  }
+
 	  highlight(highlight, event) {
 	    this.setState({ highlight: false });
 	  }
 
-	  clickHandler(highlight, pid, prompt, event) {
-	    this.setPID(pid, event);
+	  clickHandler(highlight, pid, prompt, published, event) {
 	    this.setPrompt(prompt, event);
+	    this.setPID(pid, event);
 	    this.highlight(highlight, event);
+	    this.setPublished(published, event);
 	  }
 
 	  render() {
@@ -917,7 +924,7 @@
 	    var writingArea = null;
 	    for (var i = 0; i < this.state.result.length; i++) {
 	      tab.push(React.createElement(PromptsWriting, {
-	        clickHandler: this.clickHandler.bind(this, this.state.highlight, this.state.result[i].pid, this.state.result[i].text),
+	        clickHandler: this.clickHandler,
 	        prompt: this.state.result[i].text,
 	        pid: this.state.result[i].pid,
 	        currentPID: this.state.currentPID,
@@ -932,7 +939,7 @@
 	        { className: 'selectionBox' },
 	        tab
 	      ),
-	      React.createElement(WritingArea, { pid: this.state.currentPID, prompt: this.state.currentPrompt })
+	      React.createElement(WritingArea, { published: this.state.published, pid: this.state.currentPID, prompt: this.state.currentPrompt })
 	    );
 	  }
 	}
@@ -969,6 +976,31 @@
 	          )
 	        )
 	      );
+	    }
+	    if (this.props.published) {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'div',
+	          { className: 'writing_head' },
+	          React.createElement(
+	            'h1',
+	            null,
+	            this.props.prompt
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'words' },
+	            'WordCount:'
+	          )
+	        ),
+	        React.createElement(
+	          'section',
+	          { className: 'writingpage_section' },
+	          React.createElement('article', { id: 'text', contentEditable: 'true', className: 'content writingpage_article' })
+	        )
+	      );
 	    } else {
 	      return React.createElement(
 	        'div',
@@ -978,7 +1010,7 @@
 	          { className: 'writing_head' },
 	          React.createElement(
 	            'button',
-	            { id: 'publish-button', onClick: this.publish.bind(this), className: 'btn submit' },
+	            { id: 'publish-button', onClick: this.publish.bind(this), className: 'btn' },
 	            'Submit'
 	          ),
 	          React.createElement(
@@ -1372,10 +1404,12 @@
 	    ReactDOM.render(React.createElement(Story, null), document.getElementById('d_board'));
 	  } else if (inArray("writing", url)) {
 	    ReactDOM.render(React.createElement(WritingPage, null), document.getElementById('writing_page'));
+	    pubButton();
 	  } else if (inArray("reading", url)) {
 	    ReactDOM.render(React.createElement(ReadingPage, null), document.getElementById('reading-page'));
 	  } else if (inArray("", url)) {
 	    ReactDOM.render(React.createElement(Landing, null), document.getElementById('landing-page'));
+	    conSubmit();
 	  }
 	};
 
