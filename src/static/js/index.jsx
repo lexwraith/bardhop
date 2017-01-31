@@ -21,7 +21,6 @@ $('#signupForm').submit(function(e) {
     e.preventDefault();
     return false;
 });
-
 }
 
 var pubButton = function(){
@@ -36,13 +35,35 @@ var check = function(){
   pnObject = null
   validE = 0
   validP = 0
+  checkInfoTimer = null;
+  CHECK_INTERVAL = 100;
 
   var validate = function(){
-    validateEmail();
-    validatePenname();
-    if(validE && validP){
-      $('#signupForm').unbind('submit');
-    }
+    $("#emailInput").on("input propertychange change keyup input paste", function(e) {
+      clearTimeout(checkInfoTimer);
+      checkInfoTimer = setTimeout(function() {
+        validateEmail();
+        if(validE && validP){
+          $('#signupForm').unbind('submit');
+        }
+        else{
+          conSubmit();
+        }
+      }, CHECK_INTERVAL);
+    });
+
+    $("#penInput").on("input propertychange change keyup input paste", function(e) {
+      clearTimeout(checkInfoTimer);
+      checkInfoTimer = setTimeout(function() {
+        validatePenname();
+        if(validE && validP){
+          $('#signupForm').unbind('submit');
+        }
+        else{
+          conSubmit();
+        }
+      }, CHECK_INTERVAL);
+    });
   }
 
   var validateEmail = function(){
@@ -408,6 +429,10 @@ class Signup extends React.Component{
     super(props);
   }
 
+  componentDidMount(){
+    check.validate();
+  }
+
   render(){
     return(
       <div className="form-signup">
@@ -418,10 +443,10 @@ class Signup extends React.Component{
           <h3 id="pennameError"></h3>
           <fieldset>
               <p className="login-msg">Please include 5 cents for good luck.</p>
-              <form name="myform" id="signupForm" action="/signup" method="POST" onSubmit={check.validate}>
-                  <input type="email" name="email" placeholder="Email" required />
+              <form name="myform" id="signupForm" action="/signup" method="POST">
+                  <input id="emailInput" type="email" name="email" placeholder="Email" required />
                   <input type="password" name="password" placeholder="Password" required />
-                  <input type="text" name="penname" placeholder="Pen Name" required />
+                  <input id="penInput" type="text" name="penname" placeholder="Pen Name" required />
                   <input type="submit" value="Sign up" />
               </form>
               <a className="loginSwitch" onClick={this.props.handleForm}> Already signed up? Log in.</a>
@@ -744,7 +769,6 @@ class WritingPage extends React.Component{
      this.setState({ result:result });
    }.bind(this));
   }
-
 
   setPID(pid, event){
     var text = IO.loadText(pid);
@@ -1176,6 +1200,5 @@ window.onload = function(){
   }
   else if(inArray("",url)){
     ReactDOM.render(<Landing/>, document.getElementById('landing-page'));
-    conSubmit();
   }
 };

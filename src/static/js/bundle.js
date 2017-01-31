@@ -80,13 +80,33 @@
 	  pnObject = null;
 	  validE = 0;
 	  validP = 0;
+	  checkInfoTimer = null;
+	  CHECK_INTERVAL = 100;
 
 	  var validate = function () {
-	    validateEmail();
-	    validatePenname();
-	    if (validE && validP) {
-	      $('#signupForm').unbind('submit');
-	    }
+	    $("#emailInput").on("input propertychange change keyup input paste", function (e) {
+	      clearTimeout(checkInfoTimer);
+	      checkInfoTimer = setTimeout(function () {
+	        validateEmail();
+	        if (validE && validP) {
+	          $('#signupForm').unbind('submit');
+	        } else {
+	          conSubmit();
+	        }
+	      }, CHECK_INTERVAL);
+	    });
+
+	    $("#penInput").on("input propertychange change keyup input paste", function (e) {
+	      clearTimeout(checkInfoTimer);
+	      checkInfoTimer = setTimeout(function () {
+	        validatePenname();
+	        if (validE && validP) {
+	          $('#signupForm').unbind('submit');
+	        } else {
+	          conSubmit();
+	        }
+	      }, CHECK_INTERVAL);
+	    });
 	  };
 
 	  var validateEmail = function () {
@@ -463,6 +483,10 @@
 	    super(props);
 	  }
 
+	  componentDidMount() {
+	    check.validate();
+	  }
+
 	  render() {
 	    return React.createElement(
 	      'div',
@@ -490,10 +514,10 @@
 	        ),
 	        React.createElement(
 	          'form',
-	          { name: 'myform', id: 'signupForm', action: '/signup', method: 'POST', onSubmit: check.validate },
-	          React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', required: true }),
+	          { name: 'myform', id: 'signupForm', action: '/signup', method: 'POST' },
+	          React.createElement('input', { id: 'emailInput', type: 'email', name: 'email', placeholder: 'Email', required: true }),
 	          React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', required: true }),
-	          React.createElement('input', { type: 'text', name: 'penname', placeholder: 'Pen Name', required: true }),
+	          React.createElement('input', { id: 'penInput', type: 'text', name: 'penname', placeholder: 'Pen Name', required: true }),
 	          React.createElement('input', { type: 'submit', value: 'Sign up' })
 	        ),
 	        React.createElement(
@@ -1380,7 +1404,6 @@
 	    ReactDOM.render(React.createElement(ReadingPage, null), document.getElementById('reading-page'));
 	  } else if (inArray("", url)) {
 	    ReactDOM.render(React.createElement(Landing, null), document.getElementById('landing-page'));
-	    conSubmit();
 	  }
 	};
 
