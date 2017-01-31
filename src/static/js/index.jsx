@@ -671,11 +671,12 @@ class PromptsWriting extends React.Component{
    };
     this.serverRequest = $.post("/ispublished",data=data, function(result){
       if(result == 1){
-        this.setState({published: true})
+        this.setState({published:true})
       }
       else{
-        this.setState({published: false})
+        this.setState({published:false})
       }
+      this.props.published(result)
     }.bind(this));
   }
 
@@ -687,7 +688,7 @@ class PromptsWriting extends React.Component{
     if(this.state.published){
       return(
         <div>
-          <div className="promptInfo" onClick= {this.props.clickHandler(this.props.highlight,this.props.pid,this.props.prompt,this.state.published)}>
+          <div className="promptInfo" onClick= {this.props.clickHandler}>
             <div className="p-box-green">
               <p className="writing_page_prompts">
                 {this.props.prompt}
@@ -700,7 +701,7 @@ class PromptsWriting extends React.Component{
     if(this.setHighlight()){
       return(
         <div>
-          <div className="promptInfo" onClick= {this.props.clickHandler(this.props.highlight,this.props.pid,this.props.prompt,this.state.published)}>
+          <div className="promptInfo" onClick= {this.props.clickHandler}>
             <div className="p-box-blue">
               <p className="writing_page_prompts">
                 {this.props.prompt}
@@ -714,7 +715,7 @@ class PromptsWriting extends React.Component{
     else{
     return(
       <div>
-        <div className="promptInfo" onClick= {this.props.clickHandler(this.props.highlight,this.props.pid,this.props.prompt,this.state.published)}>
+        <div className="promptInfo" onClick= {this.props.clickHandler}>
           <div className="p-box">
             <p className="writing_page_prompts">
               {this.props.prompt}
@@ -734,10 +735,8 @@ This class creates the writing page. It has 7 prompts taken from writingPrompts 
 class WritingPage extends React.Component{
   constructor(){
     super();
-    this.state = { published: false, result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false};
+    this.state = { result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false};
     this.highlight = this.highlight.bind(this);
-    this.setPublished = this.setPublished.bind(this);
-
   }
 
   componentWillMount(){
@@ -757,19 +756,14 @@ class WritingPage extends React.Component{
     this.setState({currentPrompt: prompt});
   }
 
-  setPublished(publish,event){
-    this.setState({published: publish});
-  }
-
   highlight(highlight,event){
     this.setState({highlight: false})
   }
 
-  clickHandler(highlight,pid,prompt,published,event){
-    this.setPrompt(prompt,event);
+  clickHandler(highlight,pid,prompt,event){
     this.setPID(pid,event);
+    this.setPrompt(prompt,event);
     this.highlight(highlight,event);
-    this.setPublished(published,event)
   }
 
   render(){
@@ -777,11 +771,12 @@ class WritingPage extends React.Component{
     var writingArea = null;
     for (var i = 0; i < this.state.result.length; i++){
       tab.push(<PromptsWriting
-        clickHandler={this.clickHandler}
+        clickHandler={this.clickHandler.bind(this,this.state.highlight,this.state.result[i].pid,this.state.result[i].text)}
         prompt={this.state.result[i].text}
         pid={this.state.result[i].pid}
         currentPID = {this.state.currentPID}
         highlight={this.state.highlight}
+        published={this.setPublished}
         />)};
     return(
         <div>
@@ -820,18 +815,6 @@ class WritingArea extends React.Component {
                 </div>
               </div>
             )
-          }
-          if (this.props.published) {
-            return(
-            <div>
-                <div className="writing_head">
-                    <h1>{this.props.prompt}</h1>
-                <div className="words">WordCount:</div>
-                </div>
-                <section className="writingpage_section">
-                    <article id="text" contentEditable="true" className="content writingpage_article"></article>
-                </section>
-              </div>)
           }
           else{
             return(

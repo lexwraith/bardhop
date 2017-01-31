@@ -809,6 +809,7 @@
 	      } else {
 	        this.setState({ published: false });
 	      }
+	      this.props.published(result);
 	    }.bind(this));
 	  }
 
@@ -823,7 +824,7 @@
 	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'promptInfo', onClick: this.props.clickHandler(this.props.highlight, this.props.pid, this.props.prompt, this.state.published) },
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
 	            'div',
 	            { className: 'p-box-green' },
@@ -842,7 +843,7 @@
 	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'promptInfo', onClick: this.props.clickHandler(this.props.highlight, this.props.pid, this.props.prompt, this.state.published) },
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
 	            'div',
 	            { className: 'p-box-blue' },
@@ -860,7 +861,7 @@
 	        null,
 	        React.createElement(
 	          'div',
-	          { className: 'promptInfo', onClick: this.props.clickHandler(this.props.highlight, this.props.pid, this.props.prompt, this.state.published) },
+	          { className: 'promptInfo', onClick: this.props.clickHandler },
 	          React.createElement(
 	            'div',
 	            { className: 'p-box' },
@@ -883,9 +884,8 @@
 	class WritingPage extends React.Component {
 	  constructor() {
 	    super();
-	    this.state = { published: false, result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false };
+	    this.state = { result: [], pid: [], currentPID: 1, currentPrompt: "Choose a prompt to write!", highlight: false };
 	    this.highlight = this.highlight.bind(this);
-	    this.setPublished = this.setPublished.bind(this);
 	  }
 
 	  componentWillMount() {
@@ -904,19 +904,14 @@
 	    this.setState({ currentPrompt: prompt });
 	  }
 
-	  setPublished(publish, event) {
-	    this.setState({ published: publish });
-	  }
-
 	  highlight(highlight, event) {
 	    this.setState({ highlight: false });
 	  }
 
-	  clickHandler(highlight, pid, prompt, published, event) {
-	    this.setPrompt(prompt, event);
+	  clickHandler(highlight, pid, prompt, event) {
 	    this.setPID(pid, event);
+	    this.setPrompt(prompt, event);
 	    this.highlight(highlight, event);
-	    this.setPublished(published, event);
 	  }
 
 	  render() {
@@ -924,11 +919,12 @@
 	    var writingArea = null;
 	    for (var i = 0; i < this.state.result.length; i++) {
 	      tab.push(React.createElement(PromptsWriting, {
-	        clickHandler: this.clickHandler,
+	        clickHandler: this.clickHandler.bind(this, this.state.highlight, this.state.result[i].pid, this.state.result[i].text),
 	        prompt: this.state.result[i].text,
 	        pid: this.state.result[i].pid,
 	        currentPID: this.state.currentPID,
-	        highlight: this.state.highlight
+	        highlight: this.state.highlight,
+	        published: this.setPublished
 	      }));
 	    };
 	    return React.createElement(
@@ -974,31 +970,6 @@
 	            { className: 'no-prompt' },
 	            this.props.prompt
 	          )
-	        )
-	      );
-	    }
-	    if (this.props.published) {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'div',
-	          { className: 'writing_head' },
-	          React.createElement(
-	            'h1',
-	            null,
-	            this.props.prompt
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'words' },
-	            'WordCount:'
-	          )
-	        ),
-	        React.createElement(
-	          'section',
-	          { className: 'writingpage_section' },
-	          React.createElement('article', { id: 'text', contentEditable: 'true', className: 'content writingpage_article' })
 	        )
 	      );
 	    } else {
